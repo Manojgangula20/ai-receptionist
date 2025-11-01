@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Learned Answers</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #f8f9fa;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 950px;
+        margin: 30px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.09);
+        padding: 30px;
+    }
+    h1 {
+        color: #3B4252;
+        margin-bottom: 24px;
+        font-size: 2rem;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+    a.btn {
+        display: inline-block;
+        text-decoration: none;
+        background: #2d76e2;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-weight: 500;
+        margin-bottom: 20px;
+        transition: background 0.2s;
+    }
+    a.btn:hover {
+        background: #1958af;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+    }
+    th, td {
+        border: 1px solid #baccdb;
+        padding: 12px 15px;
+        text-align: left;
+        vertical-align: top;
+    }
+    th {
+        background: #e9f1fc;
+        font-weight: 600;
+    }
+    tbody tr:nth-child(even) {
+        background: #f7f9fc;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Learned Answers</h1>
+    <a href="/" class="btn">Back to Dashboard</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>Answer</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ans in answers %}
+            <tr>
+                <td>{{ ans.question }}</td>
+                <td>{{ ans.answer }}</td>
+            </tr>
+        {% else %}
+            <tr><td colspan="2">No learned answers available yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

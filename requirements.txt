@@ -1,0 +1,6 @@
+flask
+livekit-agents
+livekit
+sqlalchemy
+python-dotenv
+requests

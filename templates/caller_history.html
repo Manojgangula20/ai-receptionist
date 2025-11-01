@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Caller History - {{ caller }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 850px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.09);
+            padding: 30px;
+        }
+        h1 {
+            color: #3B4252;
+            margin-bottom: 24px;
+            font-size: 2rem;
+            letter-spacing: 0.5px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        .card {
+            background: #e9f1fc;
+            border: 1px solid #baccdb;
+            margin-bottom: 16px;
+            padding: 20px 18px;
+            border-radius: 7px;
+        }
+        .resolved-card {
+            background: #e5ffe5;
+            border: 1px solid #b0dfb0;
+        }
+        .answer {
+            color: #219c2a;
+            font-weight: bold;
+            margin-top: 8px;
+            display: block;
+        }
+        a.back-link {
+            color: #2d76e2;
+            text-decoration: none;
+            font-size: 1rem;
+            margin-top: 16px;
+            display: inline-block;
+        }
+        a.back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Request History for {{ caller }}</h1>
+        <ul>
+            {% for r in requests %}
+            <li class="card {% if r.status == 'resolved' %}resolved-card{% endif %}">
+                <div>
+                    <b>Question:</b> {{ r.question }}<br />
+                    <small><i>Created: {{ r.created.strftime('%Y-%m-%d %H:%M:%S') }}</i></small>
+                    {% if r.status == 'resolved' %}
+                    <span class="answer">Answer: {{ r.answer }}</span>
+                    {% else %}
+                    <span><i>Status: Pending</i></span>
+                    {% endif %}
+                </div>
+            </li>
+            {% else %}
+            <li><i>No requests found for this caller.</i></li>
+            {% endfor %}
+        </ul>
+        <a href="/" class="back-link">← Back to Supervisor Dashboard</a>
+    </div>
+</body>
+</html>
