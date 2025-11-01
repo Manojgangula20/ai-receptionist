@@ -1,0 +1,130 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    max-width: 950px;
+    margin: 30px auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.09);
+    padding: 30px;
+}
+h1 {
+    color: #3B4252;
+    margin-bottom: 24px;
+    font-size: 2rem;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+form {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+input[type=text] {
+    padding: 8px;
+    border: 1px solid #baccdb;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 250px;
+}
+select {
+    padding: 8px;
+    border: 1px solid #baccdb;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+button, .btn {
+    padding: 8px 16px;
+    background: #2d76e2;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+button:hover, .btn:hover {
+    background: #1958af;
+}
+section {
+    margin-bottom: 36px;
+}
+ul {
+    list-style: none;
+    padding: 0;
+}
+.card {
+    background: #e9f1fc;
+    border: 1px solid #baccdb;
+    margin-bottom: 16px;
+    padding: 20px 18px;
+    border-radius: 7px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.request-content {
+    flex: 1 1 250px;
+    margin-right: 20px;
+}
+.resolved-card {
+    background: #e5ffe5;
+    border: 1px solid #b0dfb0;
+}
+.resolved-answer {
+    color: #219c2a;
+    font-weight: bold;
+    display: block;
+    margin-top: 12px;
+}
+a.caller-link {
+    color: #2d76e2;
+    text-decoration: none;
+}
+a.caller-link:hover {
+    text-decoration: underline;
+}
+@media(max-width: 600px) {
+    .card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .request-content {
+        margin-bottom: 12px;
+    }
+}
+.nav-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    justify-content: center;
+}
+.nav-tab {
+    background: #e9f1fc;
+    color: #2d76e2;
+    border: 1px solid #baccdb;
+    border-radius: 4px;
+    padding: 8px 18px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+}
+.nav-tab:hover {
+    background: #d1e1fa;
+    color: #1958af;
+}
+.active-tab {
+    background: #2d76e2;
+    color: #fff;
+    border: 1px solid #2d76e2;
+}

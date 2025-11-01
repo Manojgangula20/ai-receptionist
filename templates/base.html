@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}AI Receptionist Supervisor Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Supervisor Dashboard</h1>
+            <nav class="nav-tabs" style="margin-bottom:24px;">
+                <a href="/" class="nav-tab{% if request.path == '/' %} active-tab{% endif %}">Pending</a>
+                <a href="/unresolved" class="nav-tab{% if request.path == '/unresolved' %} active-tab{% endif %}">Unresolved</a>
+                <a href="/resolved" class="nav-tab{% if request.path == '/resolved' %} active-tab{% endif %}">Resolved</a>
+                <a href="/learned_answers" class="nav-tab{% if request.path == '/learned_answers' %} active-tab{% endif %}">Learned Answers</a>
+            </nav>
+
+        </header>
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

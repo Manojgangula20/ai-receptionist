@@ -1,52 +1,56 @@
 import db
-import time
-# If you want a global agent object
+import asyncio
+from livekit.agents import AgentSession, cli, WorkerOptions
 from livekit_agent import LiveKitAgent
+
 agent = LiveKitAgent()
 
+async def hangup_call(session):
+    from livekit import api
+    await session.context.api.room.delete_room(api.DeleteRoomRequest(room=session.context.room.name))
 
-def handle_incoming_call(question, caller_id):
-    # Check if question already answered in knowledge base
-    answer = db.lookup_answer(question)
-    if answer:
-        print(f"Agent: {answer}")
-        print(f"---> Customer {caller_id} notified immediately with answer.\n")
-        return answer
+async def detected_voicemail(session):
+    await session.generate_reply(instructions="Leaving a voicemail letting you know we'll call back later.")
+    await asyncio.sleep(0.5)
+    await hangup_call(session)
 
-    # Check if there is already a pending request for this caller + question
-    pending = db.get_pending_request(question, caller_id)
-    if pending:
-        print("Agent: Your request is still pending supervisor review.")
-        print(f"---> Ticket #{pending.id} submitted at {pending.created.strftime('%Y-%m-%d %H:%M:%S')}")
-        print("---> We’ll notify you once resolved.\n")
-        return None
+async def entrypoint(session: AgentSession):
+    caller_id = session.participant.identity if (hasattr(session, "participant") and session.participant) else None
+    await session.generate_reply(
+        instructions=agent.greet()
+    )
 
-    # Otherwise, add a new pending request
-    req_id = db.add_request(question, caller_id)
-    print(f"Agent: Let me check with my supervisor and get back to you. [Request {req_id} created]")
-    print(f"---> Customer {caller_id} will be contacted after supervisor resolves.\n")
-    return None
+    while True:
+        user_message = await session.receive_message()
+        if user_message is None:
+            break
 
+        question = user_message.text
+        print(f"[Agent] Caller ({caller_id}) asked: {question}")
 
-def simulate_calls():
-    test_calls = [
-        ("What are your hours?", "caller001"),
-        ("Can I book an appointment for a haircut?", "caller002"),
-        ("Do you offer hair coloring services?", "caller003"),
-        ("Do you offer hair coloring services?", "caller003"),  # Duplicate caller/question
-        ("Can I book an appointment for a haircut?", "caller002"),  # Duplicate caller/question
-        ("Do you offer hair coloring services?", "caller999"),  # Different caller, same question
-        ("What are your hours?", "caller999"),  # Different caller, known answer
-        ("What are your cancellation policies?", "caller998"),
-        ("Is parking available at your location?", "caller997"),
-        ("Do you offer group discounts?", "caller996"),
-    ]
-    for question, caller in test_calls:
-        handle_incoming_call(question, caller)
-        time.sleep(2)
+        # Voicemail detection (customize this as needed)
+        if "voicemail" in question.lower() or "answering machine" in question.lower():
+            await detected_voicemail(session)
+            break
 
+        answer = agent.get_answer(question)
+        if answer:
+            await session.generate_reply(text=answer)
+            continue
+
+        pending = db.get_pending_request(question, caller_id)
+        if pending:
+            await session.generate_reply(text="Your request is still pending supervisor review, please wait.")
+            continue
+
+        req_id = db.add_request(question, caller_id)
+        await session.generate_reply(
+            text="Let me check with my supervisor and get back to you soon. Your request will be reviewed."
+        )
+        print(f"[Agent] Escalation: Request {req_id} created for {caller_id}")
 
 if __name__ == "__main__":
-    print("Agent system online. Simulating calls...\n")
-    simulate_calls()
-    print("Check supervisor dashboard at http://localhost:5000 to resolve requests!")
+    cli.run_app(WorkerOptions(
+        entrypoint_fnc=entrypoint,
+        agent_name="my-telephony-agent"
+    ))

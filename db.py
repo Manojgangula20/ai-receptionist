@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from datetime import datetime, timezone
+from datetime import datetime, timedelta,timezone
 
 Base = declarative_base()
 
@@ -10,7 +10,7 @@ class Request(Base):
     id = Column(Integer, primary_key=True)
     question = Column(Text, nullable=False)
     caller = Column(String, nullable=False)
-    status = Column(String, default='pending')
+    status = Column(String, default='pending') # "pending", "resolved", "unresolved"
     created = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     answer = Column(Text)
 
@@ -57,11 +57,14 @@ def resolve(req_id, answer):
         return True
     return False
 
-def get_unresolved():
+def get_pending():
     return session.query(Request).filter_by(status='pending').all()
 
 def get_resolved():
     return session.query(Request).filter_by(status='resolved').all()
+def get_unresolved():
+    return session.query(Request).filter_by(status='unresolved').all()
+
 
 def lookup_answer(question):
     kb = session.query(Answer).filter_by(question=question).first()
@@ -93,6 +96,21 @@ def notify_caller(request_obj, answer):
     print(f"[AI Agent] Notifying caller '{request_obj.caller}': '{answer}'")
     # Implement webhook/SMS here
 
+def mark_unresolved_requests(session, timeout_minutes=60):
+    cutoff = datetime.now(timezone.utc) - timedelta(minutes=timeout_minutes)
+    pending_requests = session.query(Request).filter(
+        Request.status == 'pending',
+        Request.created <= cutoff
+    ).all()
+    for req in pending_requests:
+        req.status = 'unresolved'
+    session.commit()
+    print(f"Marked {len(pending_requests)} pending requests as unresolved (timeout: {timeout_minutes}min)")
 
+def get_requests(status=None):
+    if status is None:
+        return session.query(Request).order_by(Request.created.desc()).all()
+    else:
+        return session.query(Request).filter_by(status=status).order_by(Request.created.desc()).all()
 
 

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Resolved Requests{% endblock %}
+{% block content %}
+<section>
+<h2>Resolved Requests</h2>
+<ul>
+{% for r in resolved %}
+<li>
+<div class="card resolved-card">
+<div class="request-content">
+<b>Caller:</b> <a href="/caller/{{ r.caller }}" class="caller-link">{{ r.caller }}</a><br>
+<b>Question:</b> {{ r.question }}<br>
+<small><i>Created: {{ r.created.strftime('%Y-%m-%d %H:%M:%S') }}</i></small>
+</div>
+<span class="resolved-answer">{{ r.answer }}</span>
+</div>
+</li>
+{% else %}
+<li><i>No resolved requests yet.</i></li>
+{% endfor %}
+</ul>
+</section>
+{% endblock %}

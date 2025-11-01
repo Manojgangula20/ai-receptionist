@@ -4,3 +4,4 @@ livekit
 sqlalchemy
 python-dotenv
 requests
+uv
